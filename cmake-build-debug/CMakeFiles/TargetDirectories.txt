@@ -1,0 +1,3 @@
+C:/Users/annab/Projects/Quiz_Creator/cmake-build-debug/CMakeFiles/Quizz_Creator.dir
+C:/Users/annab/Projects/Quiz_Creator/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/annab/Projects/Quiz_Creator/cmake-build-debug/CMakeFiles/rebuild_cache.dir
