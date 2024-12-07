@@ -10,7 +10,7 @@
 #include <random>
 #include <algorithm>
 using namespace std;
-enum State{CREATE_QUIZ,ENTER_NAME, CREATE_QUESTION,SEE_QUESTIONS, PLAY_QUIZ, CHOOSE_TYPE,SA_FIRST,SA_SEC,MA_FIRST,MA_SEC,TP_FIRST,TP_SEC,TF_FIRST,TF_SEC,M_FIRST,M_SEC, Add_wrong_SA,Add_wrong_MA};
+enum State{CREATE_QUIZ,ENTER_NAME, CREATE_QUESTION,SEE_QUESTIONS, PLAY_QUIZ, CHOOSE_TYPE,SA_FIRST,SA_SEC,MA_FIRST,MA_SEC,TP_FIRST,TP_SEC,TF_FIRST,TF_SEC,M_FIRST, Add_wrong_SA,Add_wrong_MA};
 State curr_state = CREATE_QUIZ;
 
 
@@ -954,6 +954,21 @@ int main() {
     wrong3.setFillColor(sf::Color::Black);
     wrong3.setPosition(200, 600);
 
+    sf::Text wrong4;
+    wrong4.setString("option4");
+    wrong4.setFont(font);
+    wrong4.setCharacterSize(100);
+    wrong4.setFillColor(sf::Color::Black);
+    wrong4.setPosition(200, 700);
+
+
+    sf::Text wrong5;
+    wrong5.setString("option5");
+    wrong5.setFont(font);
+    wrong5.setCharacterSize(100);
+    wrong5.setFillColor(sf::Color::Black);
+    wrong5.setPosition(200, 800);
+
 
     sf::Text chose_q;
     chose_q.setString("Choose The Type Of Question");
@@ -1074,7 +1089,7 @@ int main() {
     btn_done.setPosition({1400,1000});
 
     sf::Text enter_que_and_answ;
-    enter_que_and_answ.setString("Enter The Question and Corresponding Answer(Up To 4)");
+    enter_que_and_answ.setString("Enter The Question and Corresponding Answer(Up To 5)");
     enter_que_and_answ.setFont(font);
     enter_que_and_answ.setCharacterSize(80);
     enter_que_and_answ.setFillColor(sf::Color::Black);
@@ -1528,36 +1543,25 @@ int main() {
                     }
                     else if (count_pairs == 2) {
                         count_pairs++;
+                        btn_bck1.setPosition({200, 745});
+                        first_pair.SetPosition({200, 718});
+                        btn_add_pair.setPosition({200, 840});
+                    }
+                    else if (count_pairs == 3) {
+                        count_pairs++;
+                        btn_bck1.setPosition({200, 850});
+                        first_pair.SetPosition({200, 821});
+                        btn_add_pair.setPosition({200, 940});
+                    }
+                    else if (count_pairs == 4) {
+                        count_pairs++;
+                        //btn_bck1.setPosition({200, 640});
+                        //first_pair.SetPosition({200, 615});
+                        //btn_add_pair.setPosition({200, 740});
                     }
 
                 }
 
-                else if (btn_add_pair.mouse_over_button(window) && curr_state == M_SEC) {
-
-                    str = first_pair.get_Text();
-                    auto found = str.find_first_of('=');//before = goes to first, after to sec
-
-                    first_m_part.push_back( str.substr(0,found));
-                    sec_m_part.push_back(str.substr(found+2));
-
-                    first_pair.empty_input();
-                    if (count_pairs == 0) {
-                        count_pairs++;
-                        btn_bck1.setPosition({200, 535});
-                        first_pair.SetPosition({200, 512});
-                        btn_add_pair.setPosition({200, 640});
-                    }
-                    else if (count_pairs == 1) {
-                        count_pairs++;
-                        btn_bck1.setPosition({200, 640});
-                        first_pair.SetPosition({200, 615});
-                        btn_add_pair.setPosition({200, 740});
-                    }
-                    else if (count_pairs == 2) {
-                        count_pairs++;
-                    }
-
-                }
                 else if (btn_add_sa.mouse_over_button(window) && curr_state == Add_wrong_SA) {
                     answ = input.get_Text();
                     answ = "wrong_ans_" + answ;
@@ -1701,30 +1705,6 @@ int main() {
                     }
                     cout << endl;
 
-                    curr_state = M_SEC;
-                    btn_add_pair.setPosition({200,550});
-                    count_pairs = 0;
-                    btn_bck1.setPosition({200,450});
-                    first_pair.empty_input();
-                    first_pair.SetPosition({200,430});
-
-
-                    num_q++;
-
-                }
-                else if (btn_done.mouse_over_button(window) && curr_state == M_SEC) {
-
-                    cout << "All Firsts: ";
-                    for(auto el:first_m_part){
-                        cout << el << ", ";
-                    }
-                    cout << endl;
-
-                    cout << "All Secs: ";
-                    for(auto el:sec_m_part){
-                        cout << el << ", ";
-                    }
-                    cout << endl;
 
                     first_m_part.erase(
                             std::remove_if(first_m_part.begin(), first_m_part.end(),
@@ -1738,27 +1718,20 @@ int main() {
                             sec_m_part.end());
                     cout << endl;
 
-
-                    //std::srand ( seed );
-                   // std::random_shuffle ( first_m_part.begin(), first_m_part.end() );
-
-                   // std::srand ( seed );
-                    //std::random_shuffle ( sec_m_part.begin(), sec_m_part.end() );
-
-
                     quiz.append_answer_map(first_m_part, sec_m_part);
                     first_m_part.erase(first_m_part.begin(),first_m_part.end());
                     sec_m_part.erase(sec_m_part.begin(),sec_m_part.end());
                     in2 = 0;
-
-
-
-
                     curr_state = CREATE_QUESTION;
                     btn_add_pair.setPosition({200,550});
-                    btn_bck1.setPosition({200,450});
-                    first_pair.SetPosition({200,430});
                     count_pairs = 0;
+                    btn_bck1.setPosition({200,450});
+                    first_pair.empty_input();
+                    first_pair.SetPosition({200,430});
+
+
+                    num_q++;
+
                 }
                 else if (btn_M.mouse_over_button(window) && curr_state == CHOOSE_TYPE) {
                     std::cout << "button M pressed" << std::endl;
@@ -1793,7 +1766,7 @@ int main() {
             if (event.type == sf::Event::TextEntered){
                 input.Type_in(event);
 
-                if(curr_state == M_FIRST || curr_state == M_SEC){
+                if(curr_state == M_FIRST ){
                     first_pair.Type_in(event);
                 }
 
@@ -1928,47 +1901,34 @@ int main() {
                 window.draw(wrong2);
                 wrong3.setString(str);
                 window.draw(wrong3);
+                btn_bck1.draw_to_window(window);
+                first_pair.draw_to_window(window);
+                btn_add_pair.draw_to_window(window);
+            }
+            else if(count_pairs == 4){
+                window.draw(wrong1);
+                window.draw(wrong2);
+                window.draw(wrong3);
+                wrong4.setString(str);
+                window.draw(wrong4);
+                btn_bck1.draw_to_window(window);
+                first_pair.draw_to_window(window);
+                btn_add_pair.draw_to_window(window);
+            }
+
+            else if(count_pairs == 5){
+                window.draw(wrong1);
+                window.draw(wrong2);
+                window.draw(wrong3);
+                window.draw(wrong4);
+                wrong5.setString(str);
+                window.draw(wrong5);
+                first_pair.draw_to_window(window);
             }
             window.draw(enter_que_and_answ);
             window.draw(type_q);
             btn_done.draw_to_window(window);
         }
-
-
-        else if(curr_state == M_SEC){
-
-            if(count_pairs == 0){//just opened it
-                btn_bck1.draw_to_window(window);
-                first_pair.draw_to_window(window);
-                btn_add_pair.draw_to_window(window);
-            }
-            else if(count_pairs == 1){//show wrong 1, moved down input, add, btn_sec
-                wrong1.setString(str);
-                window.draw(wrong1);
-                btn_bck1.draw_to_window(window);
-                first_pair.draw_to_window(window);
-                btn_add_pair.draw_to_window(window);
-            }
-            else if(count_pairs == 2){
-                window.draw(wrong1);
-                wrong2.setString(str);
-                window.draw(wrong2);
-                btn_bck1.draw_to_window(window);
-                first_pair.draw_to_window(window);
-                btn_add_pair.draw_to_window(window);
-            }
-            else if(count_pairs == 3){
-                window.draw(wrong1);
-                window.draw(wrong2);
-                wrong3.setString(str);
-                window.draw(wrong3);
-            }
-
-            window.draw(add_wron_opts);
-            window.draw(type_q);
-            btn_done.draw_to_window(window);
-        }
-
 
 
         else if(curr_state == MA_SEC){
@@ -2062,15 +2022,12 @@ int main() {
 // In SeeQuestions: edit logic
 
 //finish logic of M_Play(cancel pairs is broken)
-//remove m_sec, add in M_first up to 5 options
-
 
 //finish second TF: make true/false buttons dark until ok pressed, same for SA_Play, MA_PLAY
 //if user clicks play when there are 0 questions: print "0 questions"
 
 //back button for TP_SEC, TF_SEC, MA_SEC, SA_SEC must show the input of prev page
 //Make Enter button work for input
-
 
 //add points for questions
 //Set time limit for answers
