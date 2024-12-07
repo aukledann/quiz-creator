@@ -10,7 +10,7 @@
 #include <random>
 #include <algorithm>
 using namespace std;
-enum State{CREATE_QUIZ,ENTER_NAME, CREATE_QUESTION,SEE_QUESTIONS, PLAY_QUIZ, CHOOSE_TYPE,SA_FIRST,SA_SEC,MA_FIRST,MA_SEC,TP_FIRST,TP_SEC,TF_FIRST,TF_SEC,M_FIRST, Add_wrong_SA,Add_wrong_MA};
+enum State{CREATE_QUIZ,ENTER_NAME, CREATE_QUESTION,SEE_QUESTIONS, PLAY_QUIZ, CHOOSE_TYPE,SA_FIRST,SA_SEC,MA_FIRST,MA_SEC,TP_FIRST,TP_SEC,TF_FIRST,TF_SEC,M_FIRST, Add_wrong_SA,Add_wrong_MA, EDIT_Q,EDIT_ANS_TF,EDIT_ANS_TP,EDIT_ANS_SA,EDIT_ANS_MA};
 State curr_state = CREATE_QUIZ;
 
 
@@ -1153,8 +1153,34 @@ int main() {
     vector<Button> buttons_to_edit = create_list_edits(num_q);
 
     int ind_to_del = 0;
+    int ind_to_edit = 0;
 
     auto seed = unsigned ( std::time(0) );
+
+    Text edit_txt;
+    edit_txt.setString("Edit Question");
+    edit_txt.setFont(font);
+    edit_txt.setCharacterSize(100);
+    edit_txt.setFillColor(sf::Color::Black);
+    edit_txt.setPosition(200, 200);
+
+    Text qu;
+    qu.setString("Question:");
+    qu.setFont(font);
+    qu.setCharacterSize(100);
+    qu.setFillColor(sf::Color::Black);
+    qu.setPosition(200, 300);
+
+    TextBox qu_text(80,sf::Color::Black);
+    qu_text.SetFont(font);
+    qu_text.SetPosition({510,325});
+    qu_text.SetLimit(30);
+
+    Button btn_edit_qu_text("", sf::Color::Black,0, sf::Color(153,153,255),{1200,70});
+    btn_edit_qu_text.SetFont(font);
+    btn_edit_qu_text.setPosition({500,345});
+
+    string edited_q;
 
 
     while (window.isOpen())
@@ -1296,7 +1322,7 @@ int main() {
 
                 for(auto &el: buttons_to_edit){
                     if(el.mouse_over_button(window)){
-                        std::cout << "Mouse Over Button: "<< std::endl;
+                        //std::cout << "Mouse Over Button: "<< std::endl;
                         el.change_btn_col(sf::Color(0,0,204));
                     }
                     else{
@@ -1406,6 +1432,39 @@ int main() {
                         input.SetPosition({200, 420});
                         input.SetLimit(50);
                         num_q++;
+                    }
+                }
+
+                else if (btn_edit_qu_text.mouse_over_button(window) && curr_state == EDIT_Q) {
+                    cout << "Change" << endl;
+                    qu_text.SetText(str);
+                    qu_text.Type_in(event);
+
+                   // quiz.edit_num_map(ind_to_edit,qu_text.get_Text());
+                    //quiz.edit_question_map(ind_to_edit,qu_text.get_Text());
+                }
+
+                else if (btn_done.mouse_over_button(window) && curr_state == EDIT_Q) {
+                    edited_q = qu_text.get_Text();
+                    quiz.del_by_key(ind_to_edit);
+                    string str1 = quiz.get_answer_text(ind_to_edit);// check if mot ma!!
+                    quiz.append_answer_map(edited_q, str1);
+                    //quiz.edit_num_map(ind_to_edit,edited_q);
+                    //quiz.edit_question_map(ind_to_edit,edited_q);
+
+                    string type = quiz.get_type(ind_to_edit);
+                    if (type == "TP") {
+                        curr_state = CREATE_QUESTION;
+                        //curr_state = EDIT_ANS_TP;
+                    }
+                    else if (type == "TF") {
+                        curr_state = EDIT_ANS_TF;
+                    }
+                    else if (type == "SA") {
+                        curr_state = EDIT_ANS_SA;
+                    }
+                    else if (type == "MA") {
+                        curr_state = EDIT_ANS_MA;
                     }
                 }
 
@@ -1761,6 +1820,23 @@ int main() {
                         quiz.Print_all_questions();
                     }
                 }
+
+
+                for(int i = 0; i < buttons_to_edit.size(); i++){
+                    if(buttons_to_edit[i].mouse_over_button(window)){
+                        cout << "Edit index: " << i << endl;
+                        ind_to_edit = i;
+                        //if(quiz.get_type(i) ){if not matched
+                            curr_state = EDIT_Q;
+                            qu_text.empty_input();
+                            string str = quiz.get_question_text(ind_to_edit);
+                            qu_text.SetText(str);
+                            cout << "EDIT QUESTION TEXT: " << str << endl;
+                           // break;
+                        //}
+                        //quiz.Print_all_questions();
+                    }
+                }
             }
 
             if (event.type == sf::Event::TextEntered){
@@ -1768,6 +1844,11 @@ int main() {
 
                 if(curr_state == M_FIRST ){
                     first_pair.Type_in(event);
+                }
+
+                if(curr_state == EDIT_Q){
+                    qu_text.SetText(str);
+                    qu_text.Type_in(event);
                 }
 
 
@@ -1789,6 +1870,13 @@ int main() {
             btn_create_question.draw_to_window(window);
             btn_see_question.draw_to_window(window);
             btn_play_quiz.draw_to_window(window);
+        }
+        else if(curr_state == EDIT_Q){
+            window.draw(qu);
+            window.draw(edit_txt);
+            btn_edit_qu_text.draw_to_window(window);
+            qu_text.draw_to_window(window);
+            btn_done.draw_to_window(window);
         }
         else if(curr_state == SEE_QUESTIONS){
             btn_done.draw_to_window(window);
@@ -2017,9 +2105,12 @@ int main() {
     return 0;
 }
 
+//Edit:
+//finish EDIT_Q. (Delete record, add new at the end)
+//do edit for ans TF/TP/SAA
+//do edit for M
 
-
-// In SeeQuestions: edit logic
+//bug: crate match q, then typein q. play mode doesnt work correctly
 
 //finish logic of M_Play(cancel pairs is broken)
 

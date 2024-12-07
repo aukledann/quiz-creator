@@ -13,6 +13,10 @@ void TextBox::SetLimit(int lim){
     limit = lim;
 }
 
+void TextBox::SetText(string str){
+    text.setString(str);
+}
+
 void TextBox::SetPosition(sf::Vector2f pos){
     text.setPosition(pos);
 }

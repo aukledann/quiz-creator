@@ -21,6 +21,7 @@ using Content_type = variant<string, vector<string>>;
 using Answer_type = variant<string, vector<string>>;
 
 
+
 class New_Quiz {
 
 string quiz_name;
@@ -46,6 +47,8 @@ public:
     void append_question_map(Content_type q,Question_type type_t);
     void append_answer_map(Content_type q, Answer_type type_a);
     void append_points_map(Content_type q,  double pts);
+    void del_by_key(int nth);
+
 
     void Print_all_questions();
     void Print_ov_points();

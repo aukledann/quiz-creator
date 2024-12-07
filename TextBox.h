@@ -25,6 +25,7 @@ public:
 
 
     void SetFont(sf::Font& font);
+    void SetText(string str);
     void SetLimit(int lim);
     void SetPosition(sf::Vector2f pos);
     string get_Text();

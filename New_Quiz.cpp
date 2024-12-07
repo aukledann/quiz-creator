@@ -36,6 +36,16 @@ void  New_Quiz::append_answer_map(Content_type q, Answer_type type_a){
 void New_Quiz::append_points_map(Content_type q,  double pts){
     question_and_points[q] = pts;
 }
+void New_Quiz::del_by_key(int nth){
+    int ind = 0;
+    for(auto iter = question_and_answer.begin(); iter != question_and_answer.end();++iter){
+        if(ind == nth){
+            question_and_answer.erase(iter);
+            return;
+        }
+        ind++;
+    }
+}
 
 Answer_type& New_Quiz::operator[](const Content_type& key) {
     return question_and_answer[key];  // Access or insert a value in the map
