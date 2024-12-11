@@ -1165,6 +1165,20 @@ int main() {
     edit_txt.setFillColor(sf::Color::Black);
     edit_txt.setPosition(200, 200);
 
+    Text edit_ans;
+    edit_ans.setString("Edit Answer");
+    edit_ans.setFont(font);
+    edit_ans.setCharacterSize(100);
+    edit_ans.setFillColor(sf::Color::Black);
+    edit_ans.setPosition(200, 200);
+
+    Text edit_answers;
+    edit_answers.setString("Edit All Answers");
+    edit_answers.setFont(font);
+    edit_answers.setCharacterSize(100);
+    edit_answers.setFillColor(sf::Color::Black);
+    edit_answers.setPosition(200, 200);
+
     Text qu;
     qu.setString("Question:");
     qu.setFont(font);
@@ -1470,8 +1484,8 @@ int main() {
 
                     string type = quiz.get_type(ind_to_edit);
                     if (type == "TP") {
-                        curr_state = CREATE_QUESTION;
-                        //curr_state = EDIT_ANS_TP;
+                        //curr_state = CREATE_QUESTION;
+                        curr_state = EDIT_ANS_TP;
                     }
                     else if (type == "TF") {
                         curr_state = EDIT_ANS_TF;
@@ -1482,6 +1496,19 @@ int main() {
                     else if (type == "MA") {
                         curr_state = EDIT_ANS_MA;
                     }
+                }
+
+                else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_TP) {
+                    curr_state = CREATE_QUESTION;
+                }
+                else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_TF) {
+                    curr_state = CREATE_QUESTION;
+                }
+                else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_SA) {
+                    curr_state = CREATE_QUESTION;
+                }
+                else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_MA) {
+                    curr_state = CREATE_QUESTION;
                 }
 
                 else if (btn_play_quiz.mouse_over_button(window) && curr_state == CREATE_QUESTION) {
@@ -1895,6 +1922,34 @@ int main() {
             qu_text.draw_to_window(window);
             btn_done.draw_to_window(window);
         }
+        else if(curr_state == EDIT_ANS_TP){
+            //window.draw(qu);
+            window.draw(edit_ans);
+            //btn_edit_qu_text.draw_to_window(window);
+           // qu_text.draw_to_window(window);
+            btn_done.draw_to_window(window);
+        }
+        else if(curr_state == EDIT_ANS_TF){
+            //window.draw(qu);
+            window.draw(edit_ans);
+            //btn_edit_qu_text.draw_to_window(window);
+            // qu_text.draw_to_window(window);
+            btn_done.draw_to_window(window);
+        }
+        else if(curr_state == EDIT_ANS_SA){
+            //window.draw(qu);
+            window.draw(edit_answers);
+            //btn_edit_qu_text.draw_to_window(window);
+            // qu_text.draw_to_window(window);
+            btn_done.draw_to_window(window);
+        }
+        else if(curr_state == EDIT_ANS_MA){
+            //window.draw(qu);
+            window.draw(edit_answers);
+            //btn_edit_qu_text.draw_to_window(window);
+            // qu_text.draw_to_window(window);
+            btn_done.draw_to_window(window);
+        }
         else if(curr_state == SEE_QUESTIONS){
             btn_done.draw_to_window(window);
             see_num_q.setString("Number Of Questions:" + to_string(num_q));
@@ -2123,7 +2178,7 @@ int main() {
 }
 
 //Edit:
-//do edit for ans TF/TP/SA
+//do edit for ans TF/TP/SA/MA
 //do edit for M
 
 //bug: crate match q, then typein q. play mode doesnt work correctly
