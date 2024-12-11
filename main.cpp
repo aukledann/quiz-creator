@@ -1127,6 +1127,7 @@ int main() {
     Type_in_Question type_tp;
     True_Or_False_Question type_tf;
     Single_Answer_Question type_sa;
+    string type_random;
     vector<string> all_answers_sa(6);
     int in1 = 0;
     Multiple_Answer_Question type_ma;
@@ -1446,11 +1447,26 @@ int main() {
 
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_Q) {
                     edited_q = qu_text.get_Text();
-                    quiz.del_by_key(ind_to_edit);
                     string str1 = quiz.get_answer_text(ind_to_edit);// check if mot ma!!
+                    quiz.del_by_key(ind_to_edit);
                     quiz.append_answer_map(edited_q, str1);
-                    //quiz.edit_num_map(ind_to_edit,edited_q);
-                    //quiz.edit_question_map(ind_to_edit,edited_q);
+                    if(type_random == "SA"){
+                        Single_Answer_Question type_random1;
+                        quiz.append_question_map(edited_q,type_random1);
+                    }
+                    else if(type_random == "MA"){
+                        Multiple_Answer_Question type_random1;
+                        quiz.append_question_map(edited_q,type_random1);
+                    }
+                    else if(type_random == "TF"){
+                        True_Or_False_Question type_random1;
+                        quiz.append_question_map(edited_q,type_random1);
+                    }
+                    else if(type_random == "TP"){
+                        Type_in_Question type_random1;
+                        quiz.append_question_map(edited_q,type_random1);
+                    }
+                    quiz.append_num_map(ind_to_edit,edited_q);
 
                     string type = quiz.get_type(ind_to_edit);
                     if (type == "TP") {
@@ -1826,14 +1842,15 @@ int main() {
                     if(buttons_to_edit[i].mouse_over_button(window)){
                         cout << "Edit index: " << i << endl;
                         ind_to_edit = i;
-                        //if(quiz.get_type(i) ){if not matched
+                        if(quiz.get_type(i) != "M"){//if not matched type
+                            type_random = quiz.get_type(i);
                             curr_state = EDIT_Q;
                             qu_text.empty_input();
                             string str = quiz.get_question_text(ind_to_edit);
                             qu_text.SetText(str);
                             cout << "EDIT QUESTION TEXT: " << str << endl;
                            // break;
-                        //}
+                        }
                         //quiz.Print_all_questions();
                     }
                 }
@@ -2106,8 +2123,7 @@ int main() {
 }
 
 //Edit:
-//finish EDIT_Q. (Delete record, add new at the end)
-//do edit for ans TF/TP/SAA
+//do edit for ans TF/TP/SA
 //do edit for M
 
 //bug: crate match q, then typein q. play mode doesnt work correctly

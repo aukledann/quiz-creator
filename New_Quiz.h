@@ -35,8 +35,8 @@ public:
 
 
     New_Quiz();
-    New_Quiz(std::string_view name);//constructor
-    ~New_Quiz();//destructor
+    New_Quiz(std::string_view name);
+    ~New_Quiz();
 
     void increase_qty();
     int get_qty();

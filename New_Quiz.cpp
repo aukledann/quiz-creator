@@ -40,6 +40,19 @@ void New_Quiz::del_by_key(int nth){
     int ind = 0;
     for(auto iter = question_and_answer.begin(); iter != question_and_answer.end();++iter){
         if(ind == nth){
+            for(auto iter2 = question_and_type.begin(); iter2 != question_and_type.end();++iter2){
+                if(iter->first == iter2->first){
+                    question_and_type.erase(iter2);
+                    break;
+                }
+            }
+            for(auto iter3 = num_and_question.begin(); iter3 != num_and_question.end();++iter3){
+                if(iter->first == iter3->second){
+                    num_and_question.erase(iter3);
+                    break;
+
+                }
+            }
             question_and_answer.erase(iter);
             return;
         }
