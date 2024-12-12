@@ -48,7 +48,7 @@ public:
     void append_answer_map(Content_type q, Answer_type type_a);
     void append_points_map(Content_type q,  double pts);
     void del_by_key(int nth);
-
+    void del_only_answer_map(int nth);
 
     void Print_all_questions();
     void Print_ov_points();

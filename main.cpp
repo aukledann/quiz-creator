@@ -1196,6 +1196,24 @@ int main() {
     btn_edit_qu_text.setPosition({500,345});
 
     string edited_q;
+    string edited_ans_tp;
+
+    TextBox ans_tp_text(80,sf::Color::Black);
+    ans_tp_text.SetFont(font);
+    ans_tp_text.SetPosition({460,325});
+    ans_tp_text.SetLimit(30);
+
+
+    Text ans;
+    ans.setString("Answer:");
+    ans.setFont(font);
+    ans.setCharacterSize(100);
+    ans.setFillColor(sf::Color::Black);
+    ans.setPosition(200, 300);
+
+    Button btn_edit_ans_tp_text("", sf::Color::Black,0, sf::Color(153,153,255),{1200,70});
+    btn_edit_ans_tp_text.SetFont(font);
+    btn_edit_ans_tp_text.setPosition({450,345});
 
 
     while (window.isOpen())
@@ -1454,16 +1472,21 @@ int main() {
                     cout << "Change" << endl;
                     qu_text.SetText(str);
                     qu_text.Type_in(event);
-
-                   // quiz.edit_num_map(ind_to_edit,qu_text.get_Text());
-                    //quiz.edit_question_map(ind_to_edit,qu_text.get_Text());
+                }
+                else if (btn_edit_ans_tp_text.mouse_over_button(window) && curr_state == EDIT_ANS_TP) {
+                    cout << "Change tp" << endl;
+                    ans_tp_text.SetText(str);
+                    ans_tp_text.Type_in(event);
                 }
 
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_Q) {
                     edited_q = qu_text.get_Text();
-                    string str1 = quiz.get_answer_text(ind_to_edit);// check if mot ma!!
-                    quiz.del_by_key(ind_to_edit);
-                    quiz.append_answer_map(edited_q, str1);
+                    if(edited_q != "" ) {
+                        string str1 = quiz.get_answer_text(ind_to_edit);// check if mot ma!!
+                        quiz.del_by_key(ind_to_edit);
+                        quiz.append_answer_map(edited_q, str1);
+                        quiz.append_num_map(ind_to_edit,edited_q);
+                    }
                     if(type_random == "SA"){
                         Single_Answer_Question type_random1;
                         quiz.append_question_map(edited_q,type_random1);
@@ -1480,12 +1503,12 @@ int main() {
                         Type_in_Question type_random1;
                         quiz.append_question_map(edited_q,type_random1);
                     }
-                    quiz.append_num_map(ind_to_edit,edited_q);
 
                     string type = quiz.get_type(ind_to_edit);
                     if (type == "TP") {
-                        //curr_state = CREATE_QUESTION;
                         curr_state = EDIT_ANS_TP;
+                        string str_tp = quiz.get_answer_text(ind_to_edit);
+                        ans_tp_text.SetText(str_tp);
                     }
                     else if (type == "TF") {
                         curr_state = EDIT_ANS_TF;
@@ -1499,6 +1522,13 @@ int main() {
                 }
 
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_TP) {
+                    edited_ans_tp = ans_tp_text.get_Text();
+                    if(edited_ans_tp != "" ) {
+                        string str1 = quiz.get_question_text(ind_to_edit);// check if mot ma!!
+                        quiz.del_only_answer_map(ind_to_edit);
+                        quiz.append_answer_map(str1, edited_ans_tp);
+                    }
+
                     curr_state = CREATE_QUESTION;
                 }
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_TF) {
@@ -1895,6 +1925,11 @@ int main() {
                     qu_text.Type_in(event);
                 }
 
+                if(curr_state == EDIT_ANS_TP){
+                    ans_tp_text.SetText(str);
+                    ans_tp_text.Type_in(event);
+                }
+
 
             }
         }
@@ -1923,10 +1958,10 @@ int main() {
             btn_done.draw_to_window(window);
         }
         else if(curr_state == EDIT_ANS_TP){
-            //window.draw(qu);
+            window.draw(ans);
             window.draw(edit_ans);
-            //btn_edit_qu_text.draw_to_window(window);
-           // qu_text.draw_to_window(window);
+            btn_edit_ans_tp_text.draw_to_window(window);
+            ans_tp_text.draw_to_window(window);
             btn_done.draw_to_window(window);
         }
         else if(curr_state == EDIT_ANS_TF){
@@ -2178,7 +2213,8 @@ int main() {
 }
 
 //Edit:
-//do edit for ans TF/TP/SA/MA
+//do edit for ans TF
+//edit ans SA/MA
 //do edit for M
 
 //bug: crate match q, then typein q. play mode doesnt work correctly
