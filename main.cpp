@@ -1216,6 +1216,20 @@ int main() {
     btn_edit_ans_tp_text.setPosition({450,345});
 
 
+    Button btn_edit_ans_tf_true("True", sf::Color::Black,80, sf::Color(153,153,255),{200,80});
+    btn_edit_ans_tf_true.SetFont(font);
+    btn_edit_ans_tf_true.setPosition({200,345});
+
+    Button btn_edit_ans_tf_false("False", sf::Color::Black,80, sf::Color(153,153,255),{200,80});
+    btn_edit_ans_tf_false.SetFont(font);
+    btn_edit_ans_tf_false.setPosition({450,345});
+
+    bool clicked_true = false;
+    bool clicked_false = false;
+
+    vector<Button> buttons_edit_sa;
+    vector<Button> buttons_edit_ma;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -1356,6 +1370,24 @@ int main() {
                 for(auto &el: buttons_to_edit){
                     if(el.mouse_over_button(window)){
                         //std::cout << "Mouse Over Button: "<< std::endl;
+                        el.change_btn_col(sf::Color(0,0,204));
+                    }
+                    else{
+                        el.change_btn_col(sf::Color(153,153,255));
+                    }
+                }
+
+                for(auto &el: buttons_edit_sa){
+                    if(el.mouse_over_button(window)){
+                        el.change_btn_col(sf::Color(0,0,204));
+                    }
+                    else{
+                        el.change_btn_col(sf::Color(153,153,255));
+                    }
+                }
+
+                for(auto &el: buttons_edit_ma){
+                    if(el.mouse_over_button(window)){
                         el.change_btn_col(sf::Color(0,0,204));
                     }
                     else{
@@ -1512,12 +1544,32 @@ int main() {
                     }
                     else if (type == "TF") {
                         curr_state = EDIT_ANS_TF;
+                        if(quiz.get_answer_text(ind_to_edit) == "False"){
+                            clicked_false = true;
+                            btn_edit_ans_tf_false.change_btn_col(sf::Color(0, 0, 204));
+                        }
+                        else{
+                            clicked_true = true;
+                            btn_edit_ans_tf_true.change_btn_col(sf::Color(0, 0, 204));
+                        }
                     }
                     else if (type == "SA") {
                         curr_state = EDIT_ANS_SA;
+                        buttons_edit_sa = create_list_answers(ind_to_edit);
+                        float y = 400;
+                        for(auto &el: buttons_edit_sa){
+                            el.setPosition({200,y});
+                            y += 100;
+                        }
                     }
                     else if (type == "MA") {
                         curr_state = EDIT_ANS_MA;
+                        buttons_edit_ma = create_list_answers(ind_to_edit);
+                        float y = 400;
+                        for(auto &el: buttons_edit_sa){
+                            el.setPosition({200,y});
+                            y += 100;
+                        }
                     }
                 }
 
@@ -1533,6 +1585,10 @@ int main() {
                 }
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_TF) {
                     curr_state = CREATE_QUESTION;
+                    clicked_true = false;
+                    clicked_true = false;
+                    btn_edit_ans_tf_false.change_btn_col(sf::Color(153,153,255));
+                    btn_edit_ans_tf_true.change_btn_col(sf::Color(153,153,255));
                 }
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_SA) {
                     curr_state = CREATE_QUESTION;
@@ -1865,6 +1921,26 @@ int main() {
                     num_q++;
 
                 }
+                else if (btn_edit_ans_tf_false.mouse_over_button(window) && curr_state == EDIT_ANS_TF) {
+                    string str1 = quiz.get_question_text(ind_to_edit);
+                    quiz.del_only_answer_map(ind_to_edit);
+                    quiz.append_answer_map(str1,"False");
+                    cout << "Answer changed to False" << endl;
+                    btn_edit_ans_tf_false.change_btn_col(sf::Color(0, 0, 204));
+                    clicked_false = true;
+                    clicked_true = false;
+                    btn_edit_ans_tf_true.change_btn_col(sf::Color(153,153,255));
+                }
+                else if (btn_edit_ans_tf_true.mouse_over_button(window) && curr_state == EDIT_ANS_TF) {
+                    string str1 = quiz.get_question_text(ind_to_edit);
+                    quiz.del_only_answer_map(ind_to_edit);
+                    quiz.append_answer_map(str1,"True");
+                    cout << "Answer changet tob True" << endl;
+                    btn_edit_ans_tf_true.change_btn_col(sf::Color(0, 0, 204));
+                    clicked_false = false;
+                    clicked_true = true;
+                    btn_edit_ans_tf_false.change_btn_col(sf::Color(153,153,255));
+                }
                 else if (btn_M.mouse_over_button(window) && curr_state == CHOOSE_TYPE) {
                     std::cout << "button M pressed" << std::endl;
                 }
@@ -1909,6 +1985,12 @@ int main() {
                            // break;
                         }
                         //quiz.Print_all_questions();
+                    }
+                }
+
+                for(int i = 0; i < buttons_edit_sa.size(); i++){
+                    if(buttons_edit_sa[i].mouse_over_button(window)){
+                        string prev_text = buttons_edit_sa[i].get_text_on_btn();
                     }
                 }
             }
@@ -1965,24 +2047,24 @@ int main() {
             btn_done.draw_to_window(window);
         }
         else if(curr_state == EDIT_ANS_TF){
-            //window.draw(qu);
             window.draw(edit_ans);
-            //btn_edit_qu_text.draw_to_window(window);
-            // qu_text.draw_to_window(window);
+            btn_edit_ans_tf_true.draw_to_window(window);
+            btn_edit_ans_tf_false.draw_to_window(window);
             btn_done.draw_to_window(window);
         }
         else if(curr_state == EDIT_ANS_SA){
-            //window.draw(qu);
             window.draw(edit_answers);
-            //btn_edit_qu_text.draw_to_window(window);
-            // qu_text.draw_to_window(window);
+            for(auto el: buttons_edit_sa){
+                el.draw_to_window(window);
+            }
             btn_done.draw_to_window(window);
         }
         else if(curr_state == EDIT_ANS_MA){
-            //window.draw(qu);
             window.draw(edit_answers);
-            //btn_edit_qu_text.draw_to_window(window);
-            // qu_text.draw_to_window(window);
+            for(auto el: buttons_edit_ma){
+                el.draw_to_window(window);
+            }
+            btn_done.draw_to_window(window);
             btn_done.draw_to_window(window);
         }
         else if(curr_state == SEE_QUESTIONS){
@@ -2213,8 +2295,8 @@ int main() {
 }
 
 //Edit:
-//do edit for ans TF
-//edit ans SA/MA
+//create vector of textboxes, make actual text on buttons the same color as button.
+//finish ans SA/MA(when pressing on button textfield appears(with all prev answer text, after pressing somewhere else this vector element changes to new)
 //do edit for M
 
 //bug: crate match q, then typein q. play mode doesnt work correctly
@@ -2222,7 +2304,6 @@ int main() {
 //finish logic of M_Play(cancel pairs is broken)
 
 //finish second TF: make true/false buttons dark until ok pressed, same for SA_Play, MA_PLAY
-//if user clicks play when there are 0 questions: print "0 questions"
 
 //back button for TP_SEC, TF_SEC, MA_SEC, SA_SEC must show the input of prev page
 //Make Enter button work for input
