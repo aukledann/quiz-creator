@@ -55,6 +55,8 @@ public:
 
     vector<string>get_questions();
 
+    void change_answer_vector_by_ind(int ind_to_edit, int n, string new_el, bool is_wrong);
+
 
     void delete_record(int index);
     Answer_type& operator[](const Content_type& key);

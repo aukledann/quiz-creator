@@ -37,6 +37,8 @@ public:
 
     TextBox();
     TextBox(int size, sf::Color color);
+    TextBox(const TextBox& other);
+    TextBox(TextBox&& other);
 
 
 

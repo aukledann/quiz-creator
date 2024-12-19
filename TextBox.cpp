@@ -9,6 +9,11 @@ TextBox::TextBox(int size, sf::Color color){
     text.setCharacterSize(size);
     text.setFillColor(color);
 }
+
+TextBox::TextBox(const TextBox& other): text(other.text),limit(other.limit) {};
+
+TextBox::TextBox(TextBox&& other) = default;
+
 void TextBox::SetLimit(int lim){
     limit = lim;
 }

@@ -122,6 +122,38 @@ vector<Button> create_list_answers(int num_quest){
     return buttons;
 }
 
+vector<Button> create_list_answers_for_edit(int num_quest){
+    vector<string>answers = quiz.get_answers(num_quest);
+    vector<Button> buttons;
+    float exp = 430;
+    for(int i = 0; i < answers.size(); i++){
+        Button new_b (answers[i],  sf::Color(153,153,255),70, sf::Color(153,153,255),{1200,80});
+        new_b.SetFont(font);
+        new_b.setPosition({200, exp});
+        buttons.push_back(new_b);
+        exp += 100.0f;
+    }
+    return buttons;
+}
+
+
+vector<TextBox> create_list_textboxes(int num_quest){
+    vector<string>answers = quiz.get_answers(num_quest);
+    vector<TextBox> txtbox;
+    float exp = 400;
+    for(int i = 0; i < answers.size(); i++){
+        string remove_wrong;
+        TextBox new_txtb (100, sf::Color::Black);
+        new_txtb.SetText(answers[i]);
+        new_txtb.SetFont(font);
+        new_txtb.SetPosition({200, exp});
+        new_txtb.SetLimit(100);
+        txtbox.push_back(new_txtb);
+        exp += 100.0f;
+    }
+    return txtbox;
+}
+
 vector<Button> create_list_m_first(int num_quest){
     vector<string>first = quiz.get_q_m(num_quest);
     shuffle(first.begin(),first.end(),g);
@@ -1229,6 +1261,12 @@ int main() {
 
     vector<Button> buttons_edit_sa;
     vector<Button> buttons_edit_ma;
+    vector<TextBox>txtbox_sa;
+    vector<TextBox>txtbox_ma;
+    int pressed_ind_sa = -1;
+    int pressed_ind_ma = -1;
+    string prev_text_sa;
+    string prev_text_ma;
 
     while (window.isOpen())
     {
@@ -1377,24 +1415,6 @@ int main() {
                     }
                 }
 
-                for(auto &el: buttons_edit_sa){
-                    if(el.mouse_over_button(window)){
-                        el.change_btn_col(sf::Color(0,0,204));
-                    }
-                    else{
-                        el.change_btn_col(sf::Color(153,153,255));
-                    }
-                }
-
-                for(auto &el: buttons_edit_ma){
-                    if(el.mouse_over_button(window)){
-                        el.change_btn_col(sf::Color(0,0,204));
-                    }
-                    else{
-                        el.change_btn_col(sf::Color(153,153,255));
-                    }
-                }
-
             }
 
             if (event.type == sf::Event::MouseButtonPressed) {
@@ -1514,10 +1534,19 @@ int main() {
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_Q) {
                     edited_q = qu_text.get_Text();
                     if(edited_q != "" ) {
-                        string str1 = quiz.get_answer_text(ind_to_edit);// check if mot ma!!
-                        quiz.del_by_key(ind_to_edit);
-                        quiz.append_answer_map(edited_q, str1);
-                        quiz.append_num_map(ind_to_edit,edited_q);
+                        if(type_random != "SA" && type_random != "MA"){
+                            string str1 = quiz.get_answer_text(ind_to_edit);
+                            quiz.del_by_key(ind_to_edit);
+                            quiz.append_answer_map(edited_q, str1);
+                            quiz.append_num_map(ind_to_edit,edited_q);
+                        }
+                        else{
+                            cout << "Ma or Sa" << endl;
+                            vector<string> vector_ans = quiz.get_answers(ind_to_edit);
+                            quiz.del_by_key(ind_to_edit);
+                            quiz.append_answer_map(edited_q, vector_ans);
+                            quiz.append_num_map(ind_to_edit,edited_q);
+                        }
                     }
                     if(type_random == "SA"){
                         Single_Answer_Question type_random1;
@@ -1555,21 +1584,13 @@ int main() {
                     }
                     else if (type == "SA") {
                         curr_state = EDIT_ANS_SA;
-                        buttons_edit_sa = create_list_answers(ind_to_edit);
-                        float y = 400;
-                        for(auto &el: buttons_edit_sa){
-                            el.setPosition({200,y});
-                            y += 100;
-                        }
+                        buttons_edit_sa = create_list_answers_for_edit(ind_to_edit);
+                        txtbox_sa = create_list_textboxes(ind_to_edit);
                     }
                     else if (type == "MA") {
                         curr_state = EDIT_ANS_MA;
-                        buttons_edit_ma = create_list_answers(ind_to_edit);
-                        float y = 400;
-                        for(auto &el: buttons_edit_sa){
-                            el.setPosition({200,y});
-                            y += 100;
-                        }
+                        buttons_edit_ma = create_list_answers_for_edit(ind_to_edit);
+                        txtbox_ma = create_list_textboxes(ind_to_edit);
                     }
                 }
 
@@ -1990,7 +2011,17 @@ int main() {
 
                 for(int i = 0; i < buttons_edit_sa.size(); i++){
                     if(buttons_edit_sa[i].mouse_over_button(window)){
-                        string prev_text = buttons_edit_sa[i].get_text_on_btn();
+                        prev_text_sa = buttons_edit_sa[i].get_text_on_btn();
+                        cout << prev_text_sa << endl;
+                        pressed_ind_sa = i;
+                    }
+                }
+
+                for(int i = 0; i < buttons_edit_ma.size(); i++){
+                    if(buttons_edit_ma[i].mouse_over_button(window)){
+                        prev_text_ma = buttons_edit_ma[i].get_text_on_btn();
+                        cout << prev_text_ma << endl;
+                        pressed_ind_ma = i;
                     }
                 }
             }
@@ -2010,6 +2041,38 @@ int main() {
                 if(curr_state == EDIT_ANS_TP){
                     ans_tp_text.SetText(str);
                     ans_tp_text.Type_in(event);
+                }
+
+                if(curr_state == EDIT_ANS_SA){
+                    for(int i = 0; i < txtbox_sa.size(); i++){
+                        if(buttons_edit_sa[i].mouse_over_button(window) && pressed_ind_sa == i){
+                            txtbox_sa[i].Type_in(event);
+                            string new_ans = txtbox_sa[i].get_Text();
+                            vector<string> v_ans = quiz.get_answers(ind_to_edit);
+                            auto it = find(v_ans.begin(),v_ans.end(),prev_text_sa);
+                            bool is_wrong = false;
+                            if(prev_text_sa.substr(0,10) == "wrong_ans_"){
+                                is_wrong = true;
+                            }
+                            quiz.change_answer_vector_by_ind(ind_to_edit, i, new_ans, is_wrong);
+                        }
+                    }
+                }
+
+                if(curr_state == EDIT_ANS_MA){
+                    for(int i = 0; i < txtbox_ma.size(); i++){
+                        if(buttons_edit_ma[i].mouse_over_button(window) && pressed_ind_ma == i){
+                            txtbox_ma[i].Type_in(event);
+                            string new_ans = txtbox_ma[i].get_Text();
+                            vector<string> v_ans = quiz.get_answers(ind_to_edit);
+                            auto it = find(v_ans.begin(),v_ans.end(),prev_text_ma);
+                            bool is_wrong = false;
+                            if(prev_text_ma.substr(0,10) == "wrong_ans_"){
+                                is_wrong = true;
+                            }
+                            quiz.change_answer_vector_by_ind(ind_to_edit, i, new_ans, is_wrong);
+                        }
+                    }
                 }
 
 
@@ -2057,6 +2120,9 @@ int main() {
             for(auto el: buttons_edit_sa){
                 el.draw_to_window(window);
             }
+            for(auto el: txtbox_sa){
+                el.draw_to_window(window);
+            }
             btn_done.draw_to_window(window);
         }
         else if(curr_state == EDIT_ANS_MA){
@@ -2064,7 +2130,9 @@ int main() {
             for(auto el: buttons_edit_ma){
                 el.draw_to_window(window);
             }
-            btn_done.draw_to_window(window);
+            for(auto el: txtbox_ma){
+                el.draw_to_window(window);
+            }
             btn_done.draw_to_window(window);
         }
         else if(curr_state == SEE_QUESTIONS){
@@ -2294,18 +2362,15 @@ int main() {
     return 0;
 }
 
-//Edit:
-//create vector of textboxes, make actual text on buttons the same color as button.
-//finish ans SA/MA(when pressing on button textfield appears(with all prev answer text, after pressing somewhere else this vector element changes to new)
+
 //do edit for M
 
 //bug: crate match q, then typein q. play mode doesnt work correctly
 
 //finish logic of M_Play(cancel pairs is broken)
 
-//finish second TF: make true/false buttons dark until ok pressed, same for SA_Play, MA_PLAY
+//finish second TF: make true/false buttons dark until ok pressed, same for SA_Play, MA_PLAY(ALL Button color changes)
 
-//back button for TP_SEC, TF_SEC, MA_SEC, SA_SEC must show the input of prev page
 //Make Enter button work for input
 
 //add points for questions

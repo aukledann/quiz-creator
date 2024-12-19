@@ -76,6 +76,10 @@ void Button:: change_btn_col(sf::Color color){
     button.setFillColor(color);
 }
 
+void Button::change_txt_col(sf::Color color){
+    text_on_button.setFillColor(color);
+}
+
 void Button:: reuse_btn(string txt,sf::Color txt_Color, int char_size, sf::Color btn_color, sf::Vector2f size){
     text_on_button.setString(txt);
     text_on_button.setFillColor(txt_Color);

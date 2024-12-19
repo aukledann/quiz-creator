@@ -252,6 +252,24 @@ vector<string> New_Quiz::get_answers(int n){
     return v;
 }
 
+void New_Quiz:: change_answer_vector_by_ind(int ind_to_edit, int n,string new_el, bool is_wrong){
+    int i = 0;
+    for (auto &qa : question_and_answer) {
+        if (i == ind_to_edit && holds_alternative<vector<string>>(qa.second)) {
+            auto& answers = std::get<std::vector<std::string>>(qa.second);
+            if (n >= 0 && n < answers.size()) {
+                if(is_wrong == true){
+                    answers[n] = "wrong_ans_" + new_el;
+                }
+                else{
+                    answers[n] = new_el;
+                }
+            }
+        }
+        i++;
+    }
+}
+
 string New_Quiz::get_answer_text(int n){
     int i = 0;
     for (const auto& qa : question_and_answer) {

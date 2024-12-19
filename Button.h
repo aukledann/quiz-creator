@@ -25,6 +25,7 @@ public:
     void draw_to_window(sf::RenderWindow &window);
     bool mouse_over_button(sf::RenderWindow &window);
     void change_btn_col(sf::Color color);
+    void change_txt_col(sf::Color color);
 
 
     void reuse_btn(string txt,sf::Color txt_Color, int char_size, sf::Color btn_color, sf::Vector2f size);
