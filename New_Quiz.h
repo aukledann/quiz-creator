@@ -56,6 +56,7 @@ public:
     vector<string>get_questions();
 
     void change_answer_vector_by_ind(int ind_to_edit, int n, string new_el, bool is_wrong);
+    void change_match(int ind_to_edit, string new_first, string new_sec, string old_first,string old_sec);
 
 
     void delete_record(int index);

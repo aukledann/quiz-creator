@@ -270,6 +270,24 @@ void New_Quiz:: change_answer_vector_by_ind(int ind_to_edit, int n,string new_el
     }
 }
 
+void New_Quiz::change_match(int ind_to_edit, string first, string sec, string old_first,string old_sec){
+
+    int i = 0;
+    for (auto &qa : question_and_answer) {
+        if (i == ind_to_edit && holds_alternative<vector<string>>(qa.second)) {
+            auto& firsts = get<string>(qa.first);
+            auto& seconds = get<string>(qa.second);
+            if (firsts == old_first && seconds == old_sec) {
+                question_and_answer.erase(qa.first);
+            }
+        }
+        i++;
+    }
+
+    question_and_answer[first] = sec;
+
+}
+
 string New_Quiz::get_answer_text(int n){
     int i = 0;
     for (const auto& qa : question_and_answer) {

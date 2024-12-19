@@ -10,7 +10,7 @@
 #include <random>
 #include <algorithm>
 using namespace std;
-enum State{CREATE_QUIZ,ENTER_NAME, CREATE_QUESTION,SEE_QUESTIONS, PLAY_QUIZ, CHOOSE_TYPE,SA_FIRST,SA_SEC,MA_FIRST,MA_SEC,TP_FIRST,TP_SEC,TF_FIRST,TF_SEC,M_FIRST, Add_wrong_SA,Add_wrong_MA, EDIT_Q,EDIT_ANS_TF,EDIT_ANS_TP,EDIT_ANS_SA,EDIT_ANS_MA};
+enum State{CREATE_QUIZ,ENTER_NAME, CREATE_QUESTION,SEE_QUESTIONS, PLAY_QUIZ, CHOOSE_TYPE,SA_FIRST,SA_SEC,MA_FIRST,MA_SEC,TP_FIRST,TP_SEC,TF_FIRST,TF_SEC,M_FIRST, Add_wrong_SA,Add_wrong_MA, EDIT_Q,EDIT_ANS_TF,EDIT_ANS_TP,EDIT_ANS_SA,EDIT_ANS_MA, EDIT_M};
 State curr_state = CREATE_QUIZ;
 
 
@@ -145,6 +145,25 @@ vector<TextBox> create_list_textboxes(int num_quest){
         string remove_wrong;
         TextBox new_txtb (100, sf::Color::Black);
         new_txtb.SetText(answers[i]);
+        new_txtb.SetFont(font);
+        new_txtb.SetPosition({200, exp});
+        new_txtb.SetLimit(100);
+        txtbox.push_back(new_txtb);
+        exp += 100.0f;
+    }
+    return txtbox;
+}
+
+vector<TextBox> create_list_textboxes_for_matches(int num_quest){
+    map<string,string>match = quiz.get_all_m(num_quest);
+   // vector<string>second = quiz.get_answers(num_quest);
+    vector<TextBox> txtbox;
+    float exp = 400;
+    for(auto [key,val]: match){
+        string first_part = key;
+        string sec_part = val;
+        TextBox new_txtb (100, sf::Color::Black);
+        new_txtb.SetText(first_part + " = " + sec_part);
         new_txtb.SetFont(font);
         new_txtb.SetPosition({200, exp});
         new_txtb.SetLimit(100);
@@ -1211,6 +1230,14 @@ int main() {
     edit_answers.setFillColor(sf::Color::Black);
     edit_answers.setPosition(200, 200);
 
+
+    Text edit_matches;
+    edit_matches.setString("Edit Matches");
+    edit_matches.setFont(font);
+    edit_matches.setCharacterSize(100);
+    edit_matches.setFillColor(sf::Color::Black);
+    edit_matches.setPosition(200, 200);
+
     Text qu;
     qu.setString("Question:");
     qu.setFont(font);
@@ -1261,12 +1288,16 @@ int main() {
 
     vector<Button> buttons_edit_sa;
     vector<Button> buttons_edit_ma;
+    vector<Button> buttons_edit_m;
     vector<TextBox>txtbox_sa;
     vector<TextBox>txtbox_ma;
+    vector<TextBox>txtbox_m;
     int pressed_ind_sa = -1;
     int pressed_ind_ma = -1;
+    int pressed_ind_m = -1;
     string prev_text_sa;
     string prev_text_ma;
+    string prev_text_m;
 
     while (window.isOpen())
     {
@@ -1617,7 +1648,9 @@ int main() {
                 else if (btn_done.mouse_over_button(window) && curr_state == EDIT_ANS_MA) {
                     curr_state = CREATE_QUESTION;
                 }
-
+                else if (btn_done.mouse_over_button(window) && curr_state == EDIT_M) {
+                    curr_state = CREATE_QUESTION;
+                }
                 else if (btn_play_quiz.mouse_over_button(window) && curr_state == CREATE_QUESTION) {
                     curr_state = PLAY_QUIZ;
                     play_quiz(window, num_q);
@@ -2005,7 +2038,11 @@ int main() {
                             cout << "EDIT QUESTION TEXT: " << str << endl;
                            // break;
                         }
-                        //quiz.Print_all_questions();
+                        else{
+                            curr_state = EDIT_M;
+                            buttons_edit_m = create_list_answers_for_edit(ind_to_edit);
+                            txtbox_m = create_list_textboxes_for_matches(ind_to_edit);
+                        }
                     }
                 }
 
@@ -2022,6 +2059,14 @@ int main() {
                         prev_text_ma = buttons_edit_ma[i].get_text_on_btn();
                         cout << prev_text_ma << endl;
                         pressed_ind_ma = i;
+                    }
+                }
+
+                for(int i = 0; i < buttons_edit_m.size(); i++){
+                    if(buttons_edit_m[i].mouse_over_button(window)){
+                        prev_text_m = buttons_edit_m[i].get_text_on_btn();
+                        cout << "Previous text: " << prev_text_m << endl;
+                        pressed_ind_m = i;
                     }
                 }
             }
@@ -2071,6 +2116,34 @@ int main() {
                                 is_wrong = true;
                             }
                             quiz.change_answer_vector_by_ind(ind_to_edit, i, new_ans, is_wrong);
+                        }
+                    }
+                }
+
+                if(curr_state == EDIT_M){
+                    for(int i = 0; i < txtbox_m.size(); i++){
+                        if(buttons_edit_m[i].mouse_over_button(window) && pressed_ind_m == i){
+                            txtbox_m[i].Type_in(event);
+                            string new_ans = txtbox_m[i].get_Text();
+
+                            string old_fp;
+                            string old_sp;
+                            auto found_old = prev_text_m.find_first_of('=');//before = goes to first, after to sec
+                            if(found_old != string::npos){
+                                old_fp = str.substr(0,found_old);
+                                old_sp = str.substr(found_old+2);
+                            }
+
+                            auto found = new_ans.find_first_of('=');//before = goes to first, after to sec
+                            if(found != string::npos){
+                                string new_fp = str.substr(0,found);
+                                string new_sp = str.substr(found+2);
+                                //quiz.change_match(ind_to_edit,new_fp,new_sp,old_fp, old_sp);
+                                //quiz.del_by_key(ind_to_edit);
+                               // quiz.append_num_map(ind_to_edit,old_fp);
+                                //quiz.append_question_map(old_fp,type_m);
+                                //quiz.append_answer_map();
+                            }
                         }
                     }
                 }
@@ -2131,6 +2204,16 @@ int main() {
                 el.draw_to_window(window);
             }
             for(auto el: txtbox_ma){
+                el.draw_to_window(window);
+            }
+            btn_done.draw_to_window(window);
+        }
+        else if(curr_state == EDIT_M){
+            window.draw(edit_matches);
+            for(auto el: buttons_edit_m){
+                el.draw_to_window(window);
+            }
+            for(auto el: txtbox_m){
                 el.draw_to_window(window);
             }
             btn_done.draw_to_window(window);
@@ -2363,7 +2446,7 @@ int main() {
 }
 
 
-//do edit for M
+//finish edit_m. save the new first and second parts in this match
 
 //bug: crate match q, then typein q. play mode doesnt work correctly
 
