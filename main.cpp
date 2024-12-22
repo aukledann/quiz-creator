@@ -422,7 +422,6 @@ void play_quiz(RenderWindow &window, int num_q) {
             } else if (type == "M" &&  curr_play_state != M_Play) {
                 curr_play_state = M_Play;
                 buttons_f = create_list_m_first(nth);
-
                 buttons_s = create_list_m_sec(nth);
                 int size = buttons_f.size();
                 all_f.resize(size);
@@ -2047,11 +2046,11 @@ int main() {
                     if(buttons_to_del[i].mouse_over_button(window)){
                         cout << "Deleted index: " << i << endl;
                         num_q--;
+                        ind_to_del = i;
+                        quiz.delete_record(ind_to_del);
                         buttons = create_list_questions(num_q);
                         buttons_to_del = create_list_deletes(num_q);
                         buttons_to_edit = create_list_edits(num_q);
-                        ind_to_del = i;
-                        quiz.delete_record(ind_to_del);
                         quiz.Print_all_questions();
                     }
                 }
@@ -2133,28 +2132,6 @@ int main() {
                             cout<< "Changed " << i << " line" << endl;
                             text_changed = false;
                             string new_ans = txtbox_m[i].get_Text();
-
-                            /*string old_fp;
-                            string old_sp;
-
-                            map<string, string> all = quiz.get_all_m(ind_to_edit);
-                            int size = all.size();
-
-                            vector<string> all_f(size);
-                            vector<string> all_sec(size);
-
-                            int st = 0;
-                            for(auto [key,val]: all){
-                                all_f[st] = key;
-                                all_sec[st] = val;
-                                st++;
-                            }
-
-                            auto found_old = str.find_first_of('=');//before = goes to first, after to sec
-                            if(found_old != string::npos){
-                                old_fp = str.substr(0,found_old);
-                                old_sp = str.substr(found_old+2);
-                            }*/
 
                             auto found = new_ans.find_first_of('=');//before = goes to first, after to sec
                             if(found != string::npos) {
@@ -2584,8 +2561,7 @@ int main() {
 }
 
 
-//bug: crate match q, then typein q. play mode doesnt work correctly
-//bug : create tp q, then tf q. delete the first q. it deletes the wrong q.
+//bug: create match q, then typein q. play mode doesnt work correctly
 
 //finish logic of M_Play(cancel pairs is broken)
 //finish second TF: make true/false buttons dark until ok pressed, same for SA_Play, MA_PLAY(ALL Button color changes)

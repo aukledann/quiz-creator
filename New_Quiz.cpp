@@ -117,10 +117,10 @@ void New_Quiz::delete_record(int index) {
     }
 
     for(auto it = question_and_answer.begin(); it != question_and_answer.end();){
-        if (holds_alternative<string>(it->second) && get<string>(it->second) == to_del){
+        if (holds_alternative<string>(it->first) && get<string>(it->first) == to_del){
             it = question_and_answer.erase(it);  // Erase and move to next element
         }
-        else if(holds_alternative<vector<string>>(it->second) && get<vector<string>>(it->second) == to_del1){
+        else if(holds_alternative<vector<string>>(it->first) && get<vector<string>>(it->first) == to_del1){
             it = question_and_answer.erase(it);  // Erase and move to next element
         }
         else {
