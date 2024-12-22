@@ -31,6 +31,9 @@ Button create_btn_delete(int n){
 Button create_btn_edit(int n){
     return Button( "Edit ",  sf::Color::Black,50, sf::Color(153,153,255),{150,50});
 }
+Button create_btn_ok(int n){
+    return Button( "Ok ",  sf::Color::Black,70, sf::Color(153,153,255),{150,80});
+}
 vector<Button> create_list_edits(int num_quest){
     vector<Button> buttons_edit;
     float exp = 350;
@@ -42,6 +45,21 @@ vector<Button> create_list_edits(int num_quest){
         exp += 70.0f;
     }
     return buttons_edit;
+}
+
+vector<Button> create_list_ok_btns(int ind_to_edit){
+    vector<string> v = quiz.get_answers(ind_to_edit);
+    int size = v.size();
+    vector<Button> buttons_ok;
+    float exp = 430;
+    for(int i = 0; i < size; i++){
+        Button new_b = create_btn_ok(i);
+        new_b.SetFont(font);
+        new_b.setPosition({1450, exp});
+        buttons_ok.push_back(new_b);
+        exp += 100.0f;
+    }
+    return buttons_ok;
 }
 
 vector<Text> create_list_inccorr_ma(int num_quest){
@@ -1289,6 +1307,7 @@ int main() {
     vector<Button> buttons_edit_sa;
     vector<Button> buttons_edit_ma;
     vector<Button> buttons_edit_m;
+    vector<Button> buttons_edit_ok;
     vector<TextBox>txtbox_sa;
     vector<TextBox>txtbox_ma;
     vector<TextBox>txtbox_m;
@@ -1298,6 +1317,17 @@ int main() {
     string prev_text_sa;
     string prev_text_ma;
     string prev_text_m;
+
+
+    string new_ans;
+    string old_fp;
+    string old_sp;
+    map<string, string> all;
+    int size_all;
+    vector<string> all_f(size_all);
+    vector<string> all_sec(size_all);
+
+    bool text_changed = false;
 
     while (window.isOpen())
     {
@@ -1756,8 +1786,8 @@ int main() {
 
                 else if (btn_add_pair.mouse_over_button(window) && curr_state == M_FIRST) {
                     str = first_pair.get_Text();
-                    quiz.append_num_map(num_q,str);
-                    quiz.append_question_map(str,type_m);
+                    //quiz.append_num_map(num_q,str);
+                    //quiz.append_question_map(str,type_m);
                     auto found = str.find_first_of('=');//before = goes to first, after to sec
 
                     if(found != string::npos){
@@ -1772,6 +1802,8 @@ int main() {
 
                     first_pair.empty_input();
                     if (count_pairs == 0) {
+                        quiz.append_num_map(num_q,str);
+                        quiz.append_question_map(str,type_m);
                         count_pairs++;
                         btn_bck1.setPosition({200, 535});
                         first_pair.SetPosition({200, 512});
@@ -2042,6 +2074,7 @@ int main() {
                             curr_state = EDIT_M;
                             buttons_edit_m = create_list_answers_for_edit(ind_to_edit);
                             txtbox_m = create_list_textboxes_for_matches(ind_to_edit);
+                            buttons_edit_ok = create_list_ok_btns(ind_to_edit);
                         }
                     }
                 }
@@ -2067,6 +2100,83 @@ int main() {
                         prev_text_m = buttons_edit_m[i].get_text_on_btn();
                         cout << "Previous text: " << prev_text_m << endl;
                         pressed_ind_m = i;
+
+                        new_ans = txtbox_m[i].get_Text();
+
+                        all = quiz.get_all_m(ind_to_edit);
+                        size_all = all.size();
+
+                        all_f.resize(size_all);
+                        all_sec.resize(size_all);
+
+                        int st = 0;
+                        for(auto [key,val]: all){
+                            all_f[st] = key;
+                            all_sec[st] = val;
+                            st++;
+                        }
+                        string whole_line = all_f[i] + " = " + all_sec[i];
+
+                        auto found_old = whole_line.find_first_of('=');//before = goes to first, after to sec
+                        if(found_old != string::npos){
+                            //old_fp = str.substr(0,found_old);
+                            //old_sp = str.substr(found_old+2);
+                            old_fp = all_f[i];
+                            old_sp = all_sec[i];
+                        }
+                    }
+                }
+
+                for(int i = 0; i < buttons_edit_ok.size(); i++){
+                    if(buttons_edit_ok[i].mouse_over_button(window)){
+                        if(text_changed == true){
+                            cout<< "Changed " << i << " line" << endl;
+                            text_changed = false;
+                            string new_ans = txtbox_m[i].get_Text();
+
+                            /*string old_fp;
+                            string old_sp;
+
+                            map<string, string> all = quiz.get_all_m(ind_to_edit);
+                            int size = all.size();
+
+                            vector<string> all_f(size);
+                            vector<string> all_sec(size);
+
+                            int st = 0;
+                            for(auto [key,val]: all){
+                                all_f[st] = key;
+                                all_sec[st] = val;
+                                st++;
+                            }
+
+                            auto found_old = str.find_first_of('=');//before = goes to first, after to sec
+                            if(found_old != string::npos){
+                                old_fp = str.substr(0,found_old);
+                                old_sp = str.substr(found_old+2);
+                            }*/
+
+                            auto found = new_ans.find_first_of('=');//before = goes to first, after to sec
+                            if(found != string::npos) {
+                                string new_fp = new_ans.substr(0, found);
+                                string new_sp = new_ans.substr(found + 2);
+                                for (auto &el: all_f) {
+                                    if (el == old_fp) {
+                                        el = new_fp;
+                                    }
+                                }
+
+                                for (auto &el: all_sec) {
+                                    if (el == old_sp) {
+                                        el = new_sp;
+                                    }
+                                }
+
+                                quiz.del_only_answer_map(ind_to_edit);//removes the whole qa
+                                quiz.append_answer_map(all_f, all_sec);//adds a whole new qa
+                            }
+                        }
+
                     }
                 }
             }
@@ -2124,26 +2234,50 @@ int main() {
                     for(int i = 0; i < txtbox_m.size(); i++){
                         if(buttons_edit_m[i].mouse_over_button(window) && pressed_ind_m == i){
                             txtbox_m[i].Type_in(event);
-                            string new_ans = txtbox_m[i].get_Text();
+                            text_changed = true;
+                             /*new_ans = txtbox_m[i].get_Text();
 
-                            string old_fp;
-                            string old_sp;
-                            auto found_old = prev_text_m.find_first_of('=');//before = goes to first, after to sec
+                            all = quiz.get_all_m(ind_to_edit);
+                            size_all = all.size();
+
+                            all_f.resize(size_all);
+                            all_sec.resize(size_all);
+
+                            int st = 0;
+                            for(auto [key,val]: all){
+                                all_f[st] = key;
+                                all_sec[st] = val;
+                                st++;
+                            }
+
+                            auto found_old = str.find_first_of('=');//before = goes to first, after to sec
                             if(found_old != string::npos){
                                 old_fp = str.substr(0,found_old);
                                 old_sp = str.substr(found_old+2);
-                            }
+                            }*/
 
-                            auto found = new_ans.find_first_of('=');//before = goes to first, after to sec
+                            /*auto found = new_ans.find_first_of('=');//before = goes to first, after to sec
                             if(found != string::npos){
-                                string new_fp = str.substr(0,found);
-                                string new_sp = str.substr(found+2);
-                                //quiz.change_match(ind_to_edit,new_fp,new_sp,old_fp, old_sp);
-                                //quiz.del_by_key(ind_to_edit);
-                               // quiz.append_num_map(ind_to_edit,old_fp);
-                                //quiz.append_question_map(old_fp,type_m);
-                                //quiz.append_answer_map();
-                            }
+                                string new_fp = new_ans.substr(0,found);
+                                string new_sp = new_ans.substr(found+2);
+                                for(auto &el: all_f){
+                                    if(el == old_fp){
+                                        el = new_fp;
+                                    }
+                                }
+
+                                for(auto &el: all_sec){
+                                    if(el == old_sp){
+                                        el = new_sp;
+                                    }
+                                }
+
+                                quiz.del_only_answer_map(ind_to_edit);//removes the whole qa
+                                quiz.append_answer_map(all_f,all_sec);//adds a whole new qa
+
+
+
+                            }*/
                         }
                     }
                 }
@@ -2214,6 +2348,10 @@ int main() {
                 el.draw_to_window(window);
             }
             for(auto el: txtbox_m){
+                el.draw_to_window(window);
+            }
+
+            for(auto el: buttons_edit_ok){
                 el.draw_to_window(window);
             }
             btn_done.draw_to_window(window);
@@ -2446,15 +2584,11 @@ int main() {
 }
 
 
-//finish edit_m. save the new first and second parts in this match
-
 //bug: crate match q, then typein q. play mode doesnt work correctly
+//bug : create tp q, then tf q. delete the first q. it deletes the wrong q.
 
 //finish logic of M_Play(cancel pairs is broken)
-
 //finish second TF: make true/false buttons dark until ok pressed, same for SA_Play, MA_PLAY(ALL Button color changes)
-
-//Make Enter button work for input
 
 //add points for questions
 //Set time limit for answers

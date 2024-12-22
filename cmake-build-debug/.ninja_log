@@ -1,9 +1,9 @@
 # ninja log v5
-4	3262	7563455184693015	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
 27	1862	7534839351140430	CMakeFiles/Quizz_Creator.dir/Question.cpp.obj	4bc4425b58e9062
-3263	5086	7563455202876841	Quizz_Creator.exe	a9cbeea87bf451ef
+6	4197	7566038337172420	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
 17	1246	7534898918565040	CMakeFiles/Quizz_Creator.dir/Single_Answer_Question.cpp.obj	297587d9f5fe6f86
-5	1968	7563297689931533	CMakeFiles/Quizz_Creator.dir/New_Quiz.cpp.obj	c3d9e5797146fd67
+4198	6142	7566038356573343	Quizz_Creator.exe	a9cbeea87bf451ef
+25	3931	7564344909684582	CMakeFiles/Quizz_Creator.dir/New_Quiz.cpp.obj	c3d9e5797146fd67
 34	1457	7534839347084090	CMakeFiles/Quizz_Creator.dir/True_Or_False_Question.cpp.obj	64cd980fd59995d3
 20	1719	7534839349720190	CMakeFiles/Quizz_Creator.dir/Type_in_Question.cpp.obj	c8e9a6f04d3032b7
 66	1850	7534839351017154	CMakeFiles/Quizz_Creator.dir/Multiple_Answer_Question.cpp.obj	89b393217bfaae31
@@ -13,10 +13,13 @@
 2	470	7552818260131279	build.ninja	bed9577bfea6b6b2
 17	1785	7563133007284265	CMakeFiles/Quizz_Creator.dir/Button.cpp.obj	fe6333b04cb75e21
 5	1352	7563130493096692	CMakeFiles/Quizz_Creator.dir/TextBox.cpp.obj	89b9bf556c68c472
-5	3319	7563458320522874	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
-3320	5400	7563458341299209	Quizz_Creator.exe	a9cbeea87bf451ef
-4	2644	7563459019891993	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
-2645	4299	7563459036409948	Quizz_Creator.exe	a9cbeea87bf451ef
-5	3119	7563470245744233	CMakeFiles/Quizz_Creator.dir/New_Quiz.cpp.obj	c3d9e5797146fd67
-17	4145	7563470255996210	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
-4145	6341	7563470277930753	Quizz_Creator.exe	a9cbeea87bf451ef
+5	3889	7566041362905857	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
+3890	5861	7566041382486261	Quizz_Creator.exe	a9cbeea87bf451ef
+5	3384	7566043679820420	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
+3385	5354	7566043699495776	Quizz_Creator.exe	a9cbeea87bf451ef
+6	3544	7566047902213136	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
+3545	5517	7566047921861177	Quizz_Creator.exe	a9cbeea87bf451ef
+4	4296	7566050142202970	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
+4297	6532	7566050164505180	Quizz_Creator.exe	a9cbeea87bf451ef
+5	3473	7566050923463296	CMakeFiles/Quizz_Creator.dir/main.cpp.obj	6faf37991ea7dc32
+3474	5372	7566050942466653	Quizz_Creator.exe	a9cbeea87bf451ef
