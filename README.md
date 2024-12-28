@@ -6,12 +6,17 @@ The Quiz Creator App is a versatile tool that allows users to:
 1. Create new quizzes from scratch.
 2. Add five types of questions to a quiz:
 True/False
+
 Type-In
+
 Single Answer
+
 Multiple Answer
+
 Match
-3. Edit or delete existing questions in a quiz.
-4. Play created quizzes to test them.
+
+4. Edit or delete existing questions in a quiz.
+5. Play created quizzes to test them.
 
 **Motivation**
 
